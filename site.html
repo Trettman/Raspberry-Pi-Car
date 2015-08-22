@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+        <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            
+            body {
+                background-color: grey;
+                positition: relative;
+            }
+            
+            span {
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+        </style>
+        <title>Socket.io testing</title>
+    </head>
+    <body>
+        <span>
+            
+        </span>
+    </body>
+    <script>
+        var socket = io();
+        
+        var beta;
+        var gamma;
+        
+        // The ready variable is used when sending data to the RaPi. Without it multiple emits might occur at the same time
+        var ready = true;
+        
+        var sendInterval = setInterval(sendData, 50);
+        
+        function sendData(){
+            if(ready){
+                ready = false;
+                socket.emit("device orientation", { beta: beta, gamma: gamma });
+                ready = true;
+            }
+        }
+        
+        // When the device is oriented the beta and gamma variables are updates
+        window.ondeviceorientation = function(event){
+            beta = event.beta;
+            gamma = event.gamma;
+        }
+
+    </script>
+    <script>
+    
+    </script>
+</html>
