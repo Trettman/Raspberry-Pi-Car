@@ -28,7 +28,10 @@ io.on("connection", function(socket){
         clearInterval(autoStopInterval);
         autoStopInterval = setInterval(autoStop, 2000);
     });
-    
+    // Shuts down Raspberry Pi upon request from socket
+    socket.on("shut down", function(){
+    	exec("sudo shutdown -h now", puts);
+    });
 });
 
 function autoStop(){
@@ -36,6 +39,13 @@ function autoStop(){
     piblaster.setPwn(17, 0);
     piblaster.setPwn(18, 0);
     console.log("CAR STOPPED. Either and error occured or a user shut down the server.");
+}
+
+// Executes shell command
+var sys = require("sys");
+var exec = require("child_process").exec;
+function puts(error, stdout, stderr){
+	sys.puts(stdout);
 }
 
 // The user presses CTRL + C to stop the server
