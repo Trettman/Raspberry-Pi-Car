@@ -45,7 +45,7 @@ function autoStop(){
 var sys = require("sys");
 var exec = require("child_process").exec;
 function puts(error, stdout, stderr){
-	sys.puts(stdout);
+    sys.puts(stdout);
 }
 
 // The user presses CTRL + C to stop the server
