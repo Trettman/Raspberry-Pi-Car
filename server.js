@@ -29,8 +29,8 @@ io.on("connection", function(socket){
         autoStopInterval = setInterval(autoStop, 2000);
     });
     // Shuts down Raspberry Pi upon request from socket
-    socket.on("shut down", function(){
-    	exec("sudo shutdown -h now", puts);
+    socket.on("shell command", function(command){
+    	exec(command, puts);
     });
 });
 
