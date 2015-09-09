@@ -5,6 +5,14 @@ var piblaster = require("pi-blaster.js");
 
 var autoStopInterval = 0;
 
+var gamma;
+var beta;
+// The values that the car is stationary or max speed/max angle at
+var maxgamma = 1;
+var mingamma = 0;
+var maxbeta = 1;
+var minbeta = 0;
+
 app.get("/", function(req, res){
     res.sendFile(__dirname + "/site.html"); // res.sendFile requires and absolute path
 });
@@ -18,7 +26,23 @@ autoStopInterval = setInterval(autoStop, 2000); // If no commands are sent to th
 io.on("connection", function(socket){
     
     socket.on("device orientation", function(data){
+        
         // Do some stuff
+        
+        gamma = data.gamma;
+        beta = data.beta;
+        
+        if(gamma > maxgamma){
+            gamma = maxgamma;
+        } else if(gamma < mingamma){
+            gamma = mingamma;
+        }
+        
+        if(beta > maxbeta){
+            beta = maxbeta;
+        } else if(beta < minbeta){
+            beta = minbeta;
+        }
         
         // Controls the car width PWM using pi-blaster.js ("<value>" seems like it has to be between 0 and 1, where 1 is 100% and so on)
         piblaster.setPwm(17, "<value>"); // Forwards and backwards
