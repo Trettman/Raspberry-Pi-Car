@@ -70,7 +70,7 @@ io.on("connection", function(socket){
             height: 720;
         }
         
-        exec("sudo raspivideo -fps + fps + " -h + height + " -w " +width + " -vf -t 999999 -o ./videos/video_" + videoID);
+        exec("sudo raspivideo -fps " + fps + " -h " + height + " -w " +width + " -vf -t 999999 -o ./videos/video_" + videoID);
     });
 });
 
