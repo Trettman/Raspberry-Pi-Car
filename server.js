@@ -2,6 +2,7 @@ var app = require("express")();
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
 var piblaster = require("pi-blaster.js");
+var exec = require("child_process").exec;
 
 var autoStopInterval = 0;
 
@@ -52,9 +53,24 @@ io.on("connection", function(socket){
         clearInterval(autoStopInterval);
         autoStopInterval = setInterval(autoStop, 2000);
     });
+    
     // Shuts down Raspberry Pi upon request from socket
-    socket.on("shell command", function(command){
-    	exec(command, puts);
+    socket.on("shut down", function(){
+        exec("sudo shutdown -h now");
+    });
+    
+    // Starts video recording
+    socket.on("start video", function(requested_fps){
+        var fps = 30;
+        var width = 1920;
+        var height = 1080;
+        
+        if(requested_fps == 60){
+            width= 720;
+            height: 720;
+        }
+        
+        exec("sudo raspivideo -fps + fps + " -h + height + " -w " +width + " -vf -t 999999 -o ./videos/video_" + videoID);
     });
 });
 
@@ -63,13 +79,6 @@ function autoStop(){
     piblaster.setPwn(17, 0);
     piblaster.setPwn(18, 0);
     console.log("CAR STOPPED. Either and error occured or a user shut down the server.");
-}
-
-// Executes shell command
-var sys = require("sys");
-var exec = require("child_process").exec;
-function puts(error, stdout, stderr){
-    sys.puts(stdout);
 }
 
 // The user presses CTRL + C to stop the server
