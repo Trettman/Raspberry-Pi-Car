@@ -41,7 +41,7 @@
         // The ready variable is used when sending data to the RaPi. Without it multiple emits might occur at the same time
         var ready = true;
         
-        var sendInterval = setInterval(sendData, 50);
+        var sendInterval = setInterval(sendData, 10);
         
         function sendData(){
             if(ready){
@@ -53,14 +53,6 @@
         
         // When the device is oriented the beta and gamma variables are updates
         window.ondeviceorientation = function(event){
-            // NOTE - I need to modify the beta and gamma values so they fit the .pwm function
-            
-            /* 
-             * I need a max gamma and max beta value.
-             * Maybe it's good if the car is stationary when the phone is held at a ~30 degree angle (screen towards user)?
-             * 
-             */
-            
             beta = event.beta;
             gamma = event.gamma;
         }
