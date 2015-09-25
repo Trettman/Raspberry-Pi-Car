@@ -30,7 +30,7 @@ io.on("connection", function(socket){
     
     socket.on("device orientation", function(data){
         
-        beta = event.beta;
+        beta = data.beta;
         if(beta < minbeta){
             beta = minbeta;
         } else if(beta > maxbeta){
@@ -44,7 +44,7 @@ io.on("connection", function(socket){
         beta += 0.12;
         steering = beta;
         
-        gamma = event.gamma;
+        gamma = data.gamma;
         if(gamma < mingamma){
             gamma = mingamma;
         } else if(gamma > maxgamma){
