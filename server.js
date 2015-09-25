@@ -57,13 +57,13 @@ io.on("connection", function(socket){
         gamma += 0.12;
         throttle = gamma;
         
-        // Controls the car width PWM using pi-blaster.js ("<value>" seems like it has to be between 0 and 1, where 1 is 100% and so on)
+        // Controls the car width PWM using pi-blaster.js
         piblaster.setPwm(17, steering); // Forwards and backwards
         piblaster.setPwm(18, throttle); // Left and right
         
         // Reset the auto stop interval
         clearInterval(autoStopInterval);
-        autoStopInterval = setInterval(autoStop, 2000);
+        autoStopInterval = setInterval(autoStop, 750);
     });
     
     // Shuts down Raspberry Pi upon request from socket
