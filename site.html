@@ -41,7 +41,7 @@
         // The ready variable is used when sending data to the RaPi. Without it multiple emits might occur at the same time
         var ready = true;
         
-        var sendInterval = setInterval(sendData, 10);
+        var sendInterval = setInterval(sendData, 100);
         
         function sendData(){
             if(ready){
