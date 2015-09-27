@@ -97,8 +97,8 @@ io.on("connection", function(socket){
 
 function autoStop(){
     // Stops the car. I think 0 will stop the car...
-    piblaster.setPwn(17, 0);
-    piblaster.setPwn(18, 0);
+    piblaster.setPwm(17, 0);
+    piblaster.setPwm(18, 0);
     console.log("CAR STOPPED. Either an error occured or a user shut down the server.");
 }
 
