@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet/less" href="main.less">
+        <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+        <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/2.5.1/less.min.js"></script>
+        <title>Raspberry Pi car</title>
+    </head>
+    <body>
+        
+    </body>
+    
+    <script>
+
+        var socket = io();
+        
+        var beta;
+        var gamma;
+        
+        // The ready variable is used when sending data to the RaPi. Without it multiple emits might occur at the same time
+        var ready = true;
+        
+        var sendInterval = setInterval(sendData, 100);
+        
+        function sendData(){
+            if(ready){
+                ready = false;
+                socket.emit("device orientation", { beta: beta, gamma: gamma });
+                ready = true;
+            }
+        }
+        
+        // When the device is oriented the beta and gamma variables are updates
+        window.ondeviceorientation = function(event){
+            beta = event.beta;
+            gamma = event.gamma;
+        }
+    </script>
+    
+</html>

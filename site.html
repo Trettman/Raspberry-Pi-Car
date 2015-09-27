@@ -1,69 +1,42 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <link rel="stylesheet/less" href="./main.less">
         <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
         <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-            }
-            
-            body {
-                background-color: grey;
-                positition: relative;
-            }
-            
-            span {
-                position: absolute;
-                top: 0;
-                left: 0;
-            }
-        </style>
-        <title>Socket.io testing</title>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/less.js/2.5.1/less.min.js"></script>
+        <script src="./main.js"></script>
+        <title>Raspberry Pi car</title>
     </head>
     <body>
-        <span>
-            
-        </span>
+        <header>
+            <h1>Raspberry Pi Car</h1>
+        </header>
+        <div id="global_container">
+            <div class="link_container">
+                <a href="#">
+                    <div class="button" id="steer_button">
+                        Steer
+                    </div>
+                </a>
+                <a href="/about">
+                    <div class="button" id="about_button">
+                        About
+                    </div>
+                </a>
+                
+                <h2 id="steering_type_text" style="display: none;">Choose how you want to steer your car</h2>
+                <a href="/tilt">
+                    <div class="button" id="tilt_button" style="display: none;">
+                        Tilt
+                    </div>
+                </a>
+                <a href="/touch">
+                    <div class="button" id="touch_button" style="display: none;">
+                        Touch
+                    </div>
+                </a>
+            </div>
+        </div>
     </body>
-    <script>
-        /* 
-         * I want to give the user an option of pressing buttons to steer the vehicle
-         *
-         */ 
-        
-        var socket = io();
-        
-        var beta;
-        var gamma;
-        
-        // The ready variable is used when sending data to the RaPi. Without it multiple emits might occur at the same time
-        var ready = true;
-        
-        var sendInterval = setInterval(sendData, 50);
-        
-        function sendData(){
-            if(ready){
-                ready = false;
-                socket.emit("device orientation", { beta: beta, gamma: gamma });
-                ready = true;
-            }
-        }
-        
-        // When the device is oriented the beta and gamma variables are updates
-        window.ondeviceorientation = function(event){
-            // NOTE - I need to modify the beta and gamma values so they fit the .pwm function
-            
-            /* 
-             * I need a max gamma and max beta value.
-             * Maybe it's good if the car is stationary when the phone is held at a ~30 degree angle (screen towards user)?
-             * 
-             */
-            
-            beta = event.beta;
-            gamma = event.gamma;
-        }
-
-    </script>
 </html>
