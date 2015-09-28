@@ -39,39 +39,4 @@
             </div>
         </div>
     </body>
-<<<<<<< HEAD
 </html>
-=======
-    <script>
-        /* 
-         * I want to give the user an option of pressing buttons to steer the vehicle
-         *
-         */ 
-        
-        var socket = io();
-        
-        var beta;
-        var gamma;
-        
-        // The ready variable is used when sending data to the RaPi. Without it multiple emits might occur at the same time
-        var ready = true;
-        
-        var sendInterval = setInterval(sendData, 100);
-        
-        function sendData(){
-            if(ready){
-                ready = false;
-                socket.emit("device orientation", { beta: beta, gamma: gamma });
-                ready = true;
-            }
-        }
-        
-        // When the device is oriented the beta and gamma variables are updates
-        window.ondeviceorientation = function(event){
-            beta = event.beta;
-            gamma = event.gamma;
-        }
-
-    </script>
-</html>
->>>>>>> origin/master
