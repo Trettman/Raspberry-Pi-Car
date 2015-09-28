@@ -17,8 +17,11 @@ var gamma;
 var maxgamma = -10; // Full speed
 var mingamma = -90; // Full brake
 
+<<<<<<< HEAD
 app.use(express.static(__dirname));
 
+=======
+>>>>>>> origin/master
 app.get("/", function(req, res){
     res.sendFile(__dirname + "/site.html"); // res.sendFile requires and absolute path
 });
