@@ -1,0 +1,4 @@
+ffmpeg -s 240x180 -f video4linux2 -i /dev/video0 -f mpeg1video -b 75k -r 20 http://localhost:8082/<password>/<width>/<height>
+
+För att accessa cameran via /dev/video0:
+sudo modprobe bcm2835-v4l2
