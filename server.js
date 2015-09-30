@@ -123,3 +123,61 @@ process.on("SIGINT", function(){
     console.log("Shutting down server and stopping car.");
     process.exit(); // Exits everything
 });
+
+/* The streaming server ------------------------------------------------------------ */
+
+var webSocket = require("ws");
+var http = require("http");
+
+var	STREAM_PORT = 8082;
+var	WEBSOCKET_PORT = 8084;
+var	STREAM_MAGIC_BYTES = "jsmp"; // Must be 4 bytes
+
+var webSocketServer = new webSocket.Server({ port: WEBSOCKET_PORT });
+
+var width = 320;
+var	height = 240;
+
+// Websocket Server
+webSocketServer.on("connection", function(socket) {
+	// Send magic bytes and video size to the newly connected socket
+	// struct { char magic[4]; unsigned short width, height;}
+	var streamHeader = new Buffer(8);
+	streamHeader.write(STREAM_MAGIC_BYTES);
+	streamHeader.writeUInt16BE(width, 4);
+	streamHeader.writeUInt16BE(height, 6);
+	socket.send(streamHeader, { binary: true });
+
+	console.log("New WebSocket Connection(" + webSocketServer.clients.length + " total)");
+	
+	socket.on("close", function(code, message){
+		console.log("Disconnected WebSocket(" + webSocketServer.clients.length + " total)");
+	});
+});
+
+webSocketServer.broadcast = function(data, opts) {
+	for(var i in this.clients){
+		if(this.clients[i].readyState == 1){
+			this.clients[i].send(data, opts);
+		} else{
+			console.log("Error: Client (" + i + ") not connected.");
+		}
+	}
+};
+
+
+// HTTP Server to accept incomming MPEG Stream
+var streamServer = http.createServer(function(req, res){
+
+	console.log(
+		"Stream Connected: " + req.socket.remoteAddress + 
+		":" + req.socket.remotePort + " size: " + width + "x" + height
+	);
+	req.on("data", function(data){
+		webSocketServer.broadcast(data, { binary: true });
+	});
+}).listen(STREAM_PORT);
+
+console.log("Listening for MPEG Stream on http://127.0.0.1:" + STREAM_PORT);
+console.log("Awaiting WebSocket connections on ws://127.0.0.1:" + WEBSOCKET_PORT);
+
