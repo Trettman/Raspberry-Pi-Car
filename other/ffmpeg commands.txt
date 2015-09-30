@@ -2,3 +2,6 @@ ffmpeg -s 240x180 -f video4linux2 -i /dev/video0 -f mpeg1video -b 75k -r 20 http
 
 För att accessa cameran via /dev/video0:
 sudo modprobe bcm2835-v4l2
+
+Doesn't boot
+https://www.raspberrypi.org/forums/viewtopic.php?t=58151
