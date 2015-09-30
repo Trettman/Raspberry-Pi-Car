@@ -1,7 +1,7 @@
 var express = require('express');
 var app = express();
-var http = require("http").Server(app);
-var io = require("socket.io")(http);
+var http_steering = require("http").Server(app);
+var io = require("socket.io")(http_steering);
 var piblaster = require("pi-blaster.js");
 var exec = require("child_process").exec;
 
@@ -35,7 +35,7 @@ app.get("/about", function(req, res){
     res.sendFile(__dirname + "/about.html");
 });
 
-http.listen(3000, "0.0.0.0", function(){
+http_steering.listen(3000, "0.0.0.0", function(){
     console.log("Listening on port: 3000");
 });
 
@@ -101,59 +101,47 @@ process.on("SIGINT", function(){
     process.exit(); // Exits everything
 });
 
-/* The streaming server ------------------------------------------------------------ */
+/* The streaming server ------------------------------------------------------------------------------------- */
 
 var webSocket = require("ws");
-var http = require("http");
+var http_streaming = require("http");
 
-var	STREAM_PORT = 8082;
-var	WEBSOCKET_PORT = 8084;
-var	STREAM_MAGIC_BYTES = "jsmp"; // Must be 4 bytes
+var	stream_port = 8082;
+var	websocket_port = 8084;
+var	stream_magic_bytes = "jsmp"; // Must be 4 bytes. Will be written to stream header to decide type
 
-var webSocketServer = new webSocket.Server({ port: WEBSOCKET_PORT });
+// Creates the ws-server using already defined port
+var webSocketServer = new webSocket.Server({ port: websocket_port });
 
-var width = 320;
-var	height = 240;
+// Define width and height
+var width = 240;
+var	height = 180;
 
 // Websocket Server
-webSocketServer.on("connection", function(socket){
+webSocketServer.on("connection", function(ws){
 	// Send magic bytes and video size to the newly connected socket
-	// struct { char magic[4]; unsigned short width, height;}
-	var streamHeader = new Buffer(8);
-	streamHeader.write(STREAM_MAGIC_BYTES);
-	streamHeader.writeUInt16BE(width, 4);
-	streamHeader.writeUInt16BE(height, 6);
-	socket.send(streamHeader, { binary: true });
-
-	console.log("New WebSocket Connection(" + webSocketServer.clients.length + " total)");
-	
-	socket.on("close", function(code, message){
-		console.log("Disconnected WebSocket(" + webSocketServer.clients.length + " total)");
-	});
+	var streamHeader = new Buffer(8); // To deal with binary data directly
+	streamHeader.write(stream_magic_bytes); // Writes magic bytes
+	streamHeader.writeUInt16BE(width, 4); // Writes width
+	streamHeader.writeUInt16BE(height, 6); // Writes height
+	ws.send(streamHeader, { binary: true }); // Sends the stream header to the client where jsmpg deals with it
 });
 
+// Broadcasts stream to all connected clients (it'll only be one but support for more doesn't hurt)
 webSocketServer.broadcast = function(data, opts){
 	for(var i in this.clients){
 		if(this.clients[i].readyState == 1){
 			this.clients[i].send(data, opts);
-		} else{
-			console.log("Error: Client (" + i + ") not connected.");
 		}
 	}
 };
 
-
 // HTTP Server to accept incomming MPEG Stream
-var streamServer = http.createServer(function(req, res){
-	console.log(
-		"Stream Connected: " + req.socket.remoteAddress + 
-		":" + req.socket.remotePort + " size: " + width + "x" + height
-	);
+var streamServer = http_streaming.createServer(function(req, res){
 	req.on("data", function(data){
 		webSocketServer.broadcast(data, { binary: true });
 	});
-}).listen(STREAM_PORT);
+}).listen(stream_port);
 
-console.log("Listening for MPEG Stream on http://127.0.0.1:" + STREAM_PORT);
-console.log("Awaiting WebSocket connections on ws://127.0.0.1:" + WEBSOCKET_PORT);
-
+console.log("Listening for MPEG Stream on http://127.0.0.1:" + stream_port);
+console.log("Awaiting WebSocket connections on ws://127.0.0.1:" + websocket_port);
