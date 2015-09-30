@@ -85,29 +85,6 @@ io.on("connection", function(socket){
     socket.on("shut down", function(){
         exec("sudo shutdown -h now");
     });
-    
-    // Starts video recording
-    socket.on("start video", function(requested_fps){
-        var fps = 30;
-        var width = 1920;
-        var height = 1080;
-        
-        var d = new Date();
-        var videoID = d.getTime();
-        
-        // If the requested fps is 60 then reduce the resolution
-        if(requested_fps == 60){
-            width = 720;
-            height = 720;
-        }
-        
-        exec("sudo raspivideo -fps " + fps + " -h " + height + " -w " + width + " -vf -t 999999 -o ./videos/video_" + videoID);
-    });
-    
-    // Stops video recording
-    socket.on("stop video", function(){
-        exec("sudo pkill raspivid");
-    });
 });
 
 function autoStop(){
@@ -139,7 +116,7 @@ var width = 320;
 var	height = 240;
 
 // Websocket Server
-webSocketServer.on("connection", function(socket) {
+webSocketServer.on("connection", function(socket){
 	// Send magic bytes and video size to the newly connected socket
 	// struct { char magic[4]; unsigned short width, height;}
 	var streamHeader = new Buffer(8);
@@ -155,7 +132,7 @@ webSocketServer.on("connection", function(socket) {
 	});
 });
 
-webSocketServer.broadcast = function(data, opts) {
+webSocketServer.broadcast = function(data, opts){
 	for(var i in this.clients){
 		if(this.clients[i].readyState == 1){
 			this.clients[i].send(data, opts);
