@@ -35,6 +35,7 @@ app.get("/about", function(req, res){
     res.sendFile(__dirname + "/about.html");
 });
 
+// Sets steering server to listen to port 3000
 http_steering.listen(3000, "0.0.0.0", function(){
     console.log("Listening on port: 3000");
 });
@@ -72,11 +73,11 @@ io.on("connection", function(socket){
         gamma += 0.12;
         throttle = gamma;
         
-        // Controls the car width PWM using pi-blaster.js
+        // Sets PWM output using pi-blaster.js
         piblaster.setPwm(17, steering); // Forwards and backwards
         piblaster.setPwm(18, throttle); // Left and right
         
-        // Reset the auto stop interval
+        // Resets the auto stop interval
         clearInterval(autoStopInterval);
         autoStopInterval = setInterval(autoStop, 750);
     });
@@ -88,7 +89,7 @@ io.on("connection", function(socket){
 });
 
 function autoStop(){
-    // Stops the car. I think 0 will stop the car...
+    // Stops the car
     piblaster.setPwm(17, 0);
     piblaster.setPwm(18, 0);
     console.log("CAR STOPPED. Either an error occured or a user shut down the server.");
@@ -100,6 +101,8 @@ process.on("SIGINT", function(){
     console.log("Shutting down server and stopping car.");
     process.exit(); // Exits everything
 });
+
+console.log("Waiting for client connection on http://<RaPi ip>:3000");
 
 /* The streaming server ------------------------------------------------------------------------------------- */
 
@@ -143,5 +146,5 @@ var streamServer = http_streaming.createServer(function(req, res){
 	});
 }).listen(stream_port);
 
-console.log("Listening for MPEG Stream on http://127.0.0.1:" + stream_port);
-console.log("Awaiting WebSocket connections on ws://127.0.0.1:" + websocket_port);
+console.log("Listening for MPEG stream on http://<RaPi ip>:" + stream_port);
+console.log("Listening for WebSocket connections on ws://<RaPi ip>:" + websocket_port);
