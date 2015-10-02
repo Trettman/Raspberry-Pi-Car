@@ -4,6 +4,7 @@ var http_steering = require("http").Server(app);
 var io = require("socket.io")(http_steering);
 var piblaster = require("pi-blaster.js");
 var exec = require("child_process").exec;
+var config = require("./../modules/server_config.js");
 
 var autoStopInterval = 0;
 
@@ -36,9 +37,7 @@ app.get("/about", function(req, res){
 });
 
 // Sets steering server to listen to port 3000
-http_steering.listen(3000, "0.0.0.0", function(){
-    console.log("Listening on port: 3000");
-});
+http_steering.listen(config.steer_port);
 
 // autoStopInterval = setInterval(autoStop, 2000); // If no commands are sent to the pi within the interval of 2000ms, then the car will stop
 
@@ -109,16 +108,12 @@ console.log("Waiting for client connection on http://<RaPi ip>:3000");
 var webSocket = require("ws");
 var http_streaming = require("http");
 
-var	stream_port = 8082;
-var	websocket_port = 8084;
-var	stream_magic_bytes = "jsmp"; // Must be 4 bytes. Will be written to stream header to decide type
-
 // Creates the ws-server using already defined port
-var webSocketServer = new webSocket.Server({ port: websocket_port });
+var webSocketServer = new webSocket.Server({ port: config.websocket_port });
 
 // Define width and height
-var width = 240;
-var	height = 180;
+var width = "input width" || config.default_width;
+var	height = "input height" || config.default_height;
 
 // Websocket Server
 webSocketServer.on("connection", function(ws){
@@ -144,7 +139,7 @@ var streamServer = http_streaming.createServer(function(req, res){
 	req.on("data", function(data){
 		webSocketServer.broadcast(data, { binary: true });
 	});
-}).listen(stream_port);
+}).listen(config.stream_port);
 
-console.log("Listening for MPEG stream on http://<RaPi ip>:" + stream_port);
-console.log("Listening for WebSocket connections on ws://<RaPi ip>:" + websocket_port);
+console.log("Listening for MPEG stream on http://<RaPi ip>:" + config.stream_port);
+console.log("Listening for WebSocket connections on ws://<RaPi ip>:" + config.websocket_port);
