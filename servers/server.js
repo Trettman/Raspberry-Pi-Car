@@ -43,31 +43,10 @@ io.on("connection", function(socket){
     socket.on("device orientation", function(data){
         
         beta = data.beta;
-        if(beta < steering_config.min_beta){
-            beta = steering_config.min_beta;
-        } else if(beta > steering_config.max_beta){
-            beta = steering_config.max_beta;
-        }
-        
-        // Provides a value between 0.12 and 0.17
-        beta *= -1;
-        beta += 30;
-        beta /= 1200;
-        beta += 0.12;
-        steering = beta;
+        steering = normaliz(steering_config.max_beta, steering_config.min_beta, beta);
         
         gamma = data.gamma;
-        if(gamma < steering_config.min_gamma){
-            gamma = steering_config.min_gamma;
-        } else if(gamma > steering_config.max_gamma){
-            gamma = steering_config.max_gamma;
-        }
-        
-        // Provides a value between 0.12 and 0.17
-        gamma += 100;
-        gamma /= 1833;
-        gamma += 0.12;
-        throttle = gamma;
+        throttle = normaliz(steering_config.max_gamma, steering_config.min_gamma, gamma);
         
         // Sets PWM output using pi-blaster.js
         piblaster.setPwm(17, steering); // Forwards and backwards
@@ -83,6 +62,26 @@ io.on("connection", function(socket){
         exec("sudo shutdown -h now");
     });
 });
+
+/**
+ * Returns a value between 0.12 and 0.17 calculated from maximum allowed beta/gamma, minimum allowed beta/gamma and a given value
+ *
+ */
+function normalize(max, min, value){
+    if(value < min){
+        gamma = min;
+    } else if(gamma > max){
+        gamma = max;
+    }
+    
+    var from_zero = 0 - min; // How far the min value is from zero
+    value += from_zero;
+    var divider = (max + from_zero)/0.05 // The divider for normalizing
+    value /= divider;
+    value += 0.12; // 0.12 is the minimum allowed steering/throttle value
+    
+    return value;
+}
 
 function autoStop(){
     // Stops the car
