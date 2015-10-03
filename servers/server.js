@@ -34,7 +34,7 @@ app.get("/about", function(req, res){
 });
 
 // Sets steering server to listen to port 3000
-http_steering.listen(config.steer_port);
+http_steering.listen(server_config.steer_port);
 
 // autoStopInterval = setInterval(autoStop, 2000); // If no commands are sent to the pi within the interval of 2000ms, then the car will stop
 
@@ -64,7 +64,7 @@ io.on("connection", function(socket){
 });
 
 /**
- * Returns a value between 0.12 and 0.17 calculated from maximum allowed beta/gamma, minimum allowed beta/gamma and a given value
+ * Returns a value between 0.12 and 0.17 calculated from maximum and minimum allowed beta/gamma and a given value
  *
  */
 function normalize(max, min, value){
