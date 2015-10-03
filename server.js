@@ -1,11 +1,11 @@
-var express = require('express');
+var express = require("express");
 var app = express();
 var http_steering = require("http").Server(app);
 var io = require("socket.io")(http_steering);
 var piblaster = require("pi-blaster.js");
 var exec = require("child_process").exec;
-var server_config = require("./../modules/server_config.js");
-var steering_config = require("./../modules/steering_config.js");
+var server_config = require("./modules/server_config.js");
+var steering_config = require("./modules/steering_config.js");
 
 var autoStopInterval = 0;
 
@@ -18,19 +18,19 @@ var gamma;
 app.use(express.static(__dirname));
 
 app.get("/", function(req, res){
-    res.sendFile(__dirname + "/site.html"); // res.sendFile requires and absolute path
+    res.sendFile(__dirname + "/views/site.html"); // res.sendFile requires and absolute path
 });
 
 app.get("/tilt", function(req, res){
-    res.sendFile(__dirname + "/tilt.html");
+    res.sendFile(__dirname + "/views/tilt.html");
 });
 
 app.get("/touch", function(req, res){
-    res.sendFile(__dirname + "/touch.html");
+    res.sendFile(__dirname + "/views/touch.html");
 });
 
 app.get("/about", function(req, res){
-    res.sendFile(__dirname + "/about.html");
+    res.sendFile(__dirname + "/views/about.html");
 });
 
 // Sets steering server to listen to port 3000
@@ -43,10 +43,10 @@ io.on("connection", function(socket){
     socket.on("device orientation", function(data){
         
         beta = data.beta;
-        steering = normaliz(steering_config.max_beta, steering_config.min_beta, beta);
+        steering = normalize(steering_config.max_beta, steering_config.min_beta, beta);
         
         gamma = data.gamma;
-        throttle = normaliz(steering_config.max_gamma, steering_config.min_gamma, gamma);
+        throttle = normalize(steering_config.max_gamma, steering_config.min_gamma, gamma);
         
         // Sets PWM output using pi-blaster.js
         piblaster.setPwm(17, steering); // Forwards and backwards
@@ -105,7 +105,7 @@ var webSocket = require("ws");
 var http_streaming = require("http");
 
 // Creates the ws-server using already defined port
-var webSocketServer = new webSocket.Server({ port: steering_config.websocket_port });
+var webSocketServer = new webSocket.Server({ port: server_config.websocket_port });
 
 // Define width and height
 var width = "input width" || steering_config.default_width;
@@ -130,12 +130,12 @@ webSocketServer.broadcast = function(data, opts){
 	}
 };
 
-// HTTP Server to accept incomming MPEG Stream
+// HTTP Server to accept incomming MPEG stream
 var streamServer = http_streaming.createServer(function(req, res){
 	req.on("data", function(data){
 		webSocketServer.broadcast(data, { binary: true });
 	});
 }).listen(steering_config.stream_port);
 
-console.log("Listening for MPEG stream on http://<RaPi ip>:" + steering_config.stream_port);
-console.log("Listening for WebSocket connections on ws://<RaPi ip>:" + steering_config.websocket_port);
+console.log("Listening for MPEG stream on http://<RaPi ip>:" + server_config.stream_port);
+console.log("Listening for WebSocket connections on ws://<RaPi ip>:" + server_config.websocket_port);

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet/less" href="less/main.less">
+        <link rel="stylesheet/less" href="./../less/main.less">
         <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
         <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
         <script src="http://cdnjs.cloudflare.com/ajax/libs/less.js/2.5.1/less.min.js"></script>
-        <script src="less/main.js"></script>
+        <script src="./../js/main.js"></script>
         <title>Raspberry Pi car</title>
     </head>
     <body>
@@ -25,7 +25,7 @@
                     </div>
                 </a>
                 
-                <h2 id="steering_type_text" style="display: none;">Choose how you want to steer your car</h2>
+                <h2 id="steering_type_text" style="display: none;">Choose how you want to steer your car.</h2>
                 <a href="/tilt">
                     <div class="button" id="tilt_button" style="display: none;">
                         Tilt
@@ -34,6 +34,11 @@
                 <a href="/touch">
                     <div class="button" id="touch_button" style="display: none;">
                         Touch
+                    </div>
+                </a>
+                <a href="/">
+                    <div class="button" id="home_button" style="display: none;">
+                        Home
                     </div>
                 </a>
             </div>

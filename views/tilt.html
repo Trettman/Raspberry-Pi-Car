@@ -1,21 +1,16 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet/less" href="less/main.less">
+        <link rel="stylesheet/less" href="./../less/main.less">
         <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
         <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/2.5.1/less.min.js"></script>
         <title>Raspberry Pi car</title>
     </head>
     <body>
-        <!-- 
-		The Canvas size specified here is the "initial" internal resolution. jsmpeg will
-		change this internal resolution to whatever the source provides. The size the
-		canvas is displayed on the website is dictated by the CSS style.
-		-->
 		<canvas id="videoCanvas" width="640" height="480"></canvas>
 		
-		<script type="text/javascript" src="jsmpg.js"></script>
+		<script type="text/javascript" src="./../js/jsmpg.js"></script>
 		<script type="text/javascript">
 			// Setup the WebSocket connection and start the player
 			var client = new WebSocket("ws://192.168.0.107:8084");

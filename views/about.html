@@ -1,13 +1,31 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet/less" href="less/main.less">
+        <link rel="stylesheet/less" href="./../less/main.less">
         <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
         <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/2.5.1/less.min.js"></script>
         <title>Raspberry Pi car</title>
     </head>
     <body>
-        
+        <header>
+            <h1>Raspberry Pi Car</h1>
+        </header>
+        <div class="link_container">
+	        <a href="/">
+	            <div class="button">
+	                Home
+	            </div>
+	        </a>
+	    </div>
+        <div id="global_container">
+        	<div class="text_container">
+        		This is project made by me, Otto Sellerstam, a 18 year old student, for school.
+        		It allows you to control a remote controlled car with your phone by connecting 
+        		a Raspberry Pi to the car's ESC and servo, and then running a Node.js server on
+        		it. The files required for the server can be found at 
+        		<a href="https://github.com/Trettman/Raspberry-Pi-Car">https://github.com/Trettman/Raspberry-Pi-Car</a>
+        	</div>
+        </div>
     </body>    
 </html>
