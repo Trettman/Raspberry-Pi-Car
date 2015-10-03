@@ -4,19 +4,16 @@ var http_steering = require("http").Server(app);
 var io = require("socket.io")(http_steering);
 var piblaster = require("pi-blaster.js");
 var exec = require("child_process").exec;
-var config = require("./../modules/server_config.js");
+var server_config = require("./../modules/server_config.js");
+var steering_config = require("./../modules/steering_config.js");
 
 var autoStopInterval = 0;
 
-var steering = 0.145; // Straight forward
+var steering = steering_config.starting_steering;
 var beta;
-var maxbeta = 30; // Full left
-var minbeta = -30; // Full right
 
-var throttle = 0.148; // The value that the car is stationary at
+var throttle = steering_config.starting_throttle;;
 var gamma;
-var maxgamma = -10; // Full speed
-var mingamma = -90; // Full brake
 
 app.use(express.static(__dirname));
 
@@ -46,10 +43,10 @@ io.on("connection", function(socket){
     socket.on("device orientation", function(data){
         
         beta = data.beta;
-        if(beta < minbeta){
-            beta = minbeta;
-        } else if(beta > maxbeta){
-            beta = maxbeta;
+        if(beta < steering_config.min_beta){
+            beta = steering_config.min_beta;
+        } else if(beta > steering_config.max_beta){
+            beta = steering_config.max_beta;
         }
         
         // Provides a value between 0.12 and 0.17
@@ -60,10 +57,10 @@ io.on("connection", function(socket){
         steering = beta;
         
         gamma = data.gamma;
-        if(gamma < mingamma){
-            gamma = mingamma;
-        } else if(gamma > maxgamma){
-            gamma = maxgamma;
+        if(gamma < steering_config.min_gamma){
+            gamma = steering_config.min_gamma;
+        } else if(gamma > steering_config.max_gamma){
+            gamma = steering_config.max_gamma;
         }
         
         // Provides a value between 0.12 and 0.17
@@ -109,11 +106,11 @@ var webSocket = require("ws");
 var http_streaming = require("http");
 
 // Creates the ws-server using already defined port
-var webSocketServer = new webSocket.Server({ port: config.websocket_port });
+var webSocketServer = new webSocket.Server({ port: steering_config.websocket_port });
 
 // Define width and height
-var width = "input width" || config.default_width;
-var	height = "input height" || config.default_height;
+var width = "input width" || steering_config.default_width;
+var	height = "input height" || steering_config.default_height;
 
 // Websocket Server
 webSocketServer.on("connection", function(ws){
@@ -139,7 +136,7 @@ var streamServer = http_streaming.createServer(function(req, res){
 	req.on("data", function(data){
 		webSocketServer.broadcast(data, { binary: true });
 	});
-}).listen(config.stream_port);
+}).listen(steering_config.stream_port);
 
-console.log("Listening for MPEG stream on http://<RaPi ip>:" + config.stream_port);
-console.log("Listening for WebSocket connections on ws://<RaPi ip>:" + config.websocket_port);
+console.log("Listening for MPEG stream on http://<RaPi ip>:" + steering_config.stream_port);
+console.log("Listening for WebSocket connections on ws://<RaPi ip>:" + steering_config.websocket_port);
