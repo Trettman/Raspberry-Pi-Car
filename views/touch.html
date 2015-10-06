@@ -9,7 +9,8 @@
     </head>
     <body>
     	<canvas id="canvas"></canvas>
-    	<a href="/" id="canvas_link">Home</a>
+    	<span id="beta">Beta: </span>
+    	<span id="gamma">Gamma: </span>
     	<script type="text/javascript">
     		var canvas = document.getElementById("canvas");
 			var ctx = canvas.getContext("2d");
@@ -36,7 +37,6 @@
 
 			var socket = io();
 
-	        // The ready variable is used when sending data to the RaPi. Without it multiple emits might occur at the same time
 	        var ready = true;
 	        
 	        var sendInterval = setInterval(sendData, 100);
@@ -44,23 +44,38 @@
 	        function sendData(){
 	            if(ready){
 	                ready = false;
-	                socket.emit("device orientation", { beta: beta, gamma: gamma });
+	                socket.emit("device update", { beta: calculateBetaGamma().beta, gamma: calculateBetaGamma().gamma });
 	                ready = true;
 	            }
 	        }
 
-	        window.addEventListener('touchstart', function(event){
+	        function calculateBetaGamma(){
+				var beta = (circle.x) / window.innerWidth * 60 - 30;
+				var gamma = (-circle.y) / window.innerHeight * 80 - 10;
+
+	        	return { beta: beta, gamma: gamma };
+	        }
+
+	        window.addEventListener("touchstart", function(event){
 			    event.preventDefault();
 			    circle.x = event.touches[0].pageX;
 			    circle.y = event.touches[0].pageY;
+			    $("#beta").text("Beta: " + calculateBetaGamma().beta);
+			    $("#gamma").text("Gamma: " + calculateBetaGamma().gamma);
 			}, false);
-			window.addEventListener('touchmove', function(event){
+			window.addEventListener("touchmove", function(event){
 			    event.preventDefault();
 			    circle.x = event.touches[0].pageX;
 			    circle.y = event.touches[0].pageY;
+			    $("#beta").text("Beta: " + calculateBetaGamma().beta);
+			    $("#gamma").text("Gamma: " + calculateBetaGamma().gamma);
 			}, false);
-			window.addEventListener('touchend', function(event){
+			window.addEventListener("touchend", function(event){
 			    event.preventDefault();
+			    circle.y = window.innerHeight/2;
+			    circle.x = window.innerWidth/2;
+			    $("#beta").text("Beta: " + calculateBetaGamma().beta);
+			    $("#gamma").text("Gamma: " + calculateBetaGamma().gamma);
 			}, false);
 
     	</script>

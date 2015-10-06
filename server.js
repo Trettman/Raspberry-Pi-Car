@@ -40,7 +40,7 @@ http_steering.listen(server_config.steer_port);
 
 io.on("connection", function(socket){
     
-    socket.on("device orientation", function(data){
+    socket.on("device update", function(data){
         
         beta = data.beta;
         steering = normalize(steering_config.max_beta, steering_config.min_beta, beta);

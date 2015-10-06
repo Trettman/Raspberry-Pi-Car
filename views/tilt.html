@@ -35,7 +35,7 @@
         function sendData(){
             if(ready){
                 ready = false;
-                socket.emit("device orientation", { beta: beta, gamma: gamma });
+                socket.emit("device update", { beta: beta, gamma: gamma });
                 ready = true;
             }
         }
