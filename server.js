@@ -43,7 +43,7 @@ io.on("connection", function(socket){
     socket.on("device update", function(data){
         
         beta = data.beta;
-        steering = normalize(steering_config.max_beta, steering_config.min_beta, beta);
+        steering = normalize(steering_config.max_beta, steering_config.min_beta, -beta);
         
         gamma = data.gamma;
         throttle = normalize(steering_config.max_gamma, steering_config.min_gamma, gamma);
