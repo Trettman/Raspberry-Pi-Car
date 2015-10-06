@@ -18,7 +18,7 @@ var gamma;
 app.use(express.static(__dirname));
 
 app.get("/", function(req, res){
-    res.sendFile(__dirname + "/views/site.html"); // res.sendFile requires and absolute path
+    res.sendFile(__dirname + "/views/site.html"); // sendFile() requires and absolute path
 });
 
 app.get("/tilt", function(req, res){
