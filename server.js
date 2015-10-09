@@ -108,8 +108,8 @@ var http_streaming = require("http");
 var webSocketServer = new webSocket.Server({ port: server_config.websocket_port });
 
 // Define width and height
-var width = "input width" || steering_config.default_width;
-var	height = "input height" || steering_config.default_height;
+var width = server_config.default_width;
+var	height = server_config.default_height;
 
 // Websocket Server
 webSocketServer.on("connection", function(ws){
@@ -135,7 +135,7 @@ var streamServer = http_streaming.createServer(function(req, res){
 	req.on("data", function(data){
 		webSocketServer.broadcast(data, { binary: true });
 	});
-}).listen(steering_config.stream_port);
+}).listen(server_config.stream_port);
 
 console.log("Listening for MPEG stream on http://<RaPi ip>:" + server_config.stream_port);
 console.log("Listening for WebSocket connections on ws://<RaPi ip>:" + server_config.websocket_port);
