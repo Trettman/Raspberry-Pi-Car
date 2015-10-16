@@ -2,6 +2,7 @@
 <html>
     <head>
         <link rel="stylesheet/less" href="./../less/main.less">
+        <script type="text/javascript" src="./../js/jsmpg.js"></script>
         <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
         <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/2.5.1/less.min.js"></script>
@@ -9,15 +10,7 @@
     </head>
     <body>
 		<canvas id="videoCanvas" width="640" height="480"></canvas>
-		
-		<script type="text/javascript" src="./../js/jsmpg.js"></script>
-		<script type="text/javascript">
-			// Setup the WebSocket connection and start the player
-			var client = new WebSocket("ws://192.168.0.107:8084/");
-	
-			var canvas = document.getElementById("videoCanvas");
-			var player = new jsmpeg(client, { canvas: canvas });
-		</script>
+        <button id="toggle_stream" onclick="toggleStream()">Toggle Stream</button>
     </body>
     
     <script type="text/javascript">
@@ -29,10 +22,16 @@
         
         // The ready variable is used when sending data to the RaPi. Without it multiple emits might occur at the same time
         var ready = true;
-        
+
+        // True if streaming, false if not
+        var streaming = false;
+
+        // Sets the sendData() interval. Data will be send every 100ms
         var sendInterval = setInterval(sendData, 100);
         
+        // Sends data to Raspberry Pi
         function sendData(){
+            // Checks if the previous data is sent; no need to stack non-sent data
             if(ready){
                 ready = false;
                 socket.emit("device update", { beta: beta, gamma: gamma });
@@ -44,6 +43,38 @@
         window.ondeviceorientation = function(event){
             beta = event.beta;
             gamma = event.gamma;
+        }
+
+        // Toggles the video stream if the user clicks continue on popup window
+        function toggleStream(){
+
+            // If the user is not streaming then as if he/she wants to
+            if(!streaming){
+                if(confirm("When streaming is enabled, delay and lagg may increase.") == true){
+
+                    // Setup the WebSocket connection and start the player
+                    var client = new WebSocket("ws://192.168.0.107:8084/");
+                    
+                    var canvas = document.getElementById("videoCanvas");
+                    var player = new jsmpeg(client, { canvas: canvas });
+
+                    // Starts on server side stream
+                    socket.emit("start stream");
+
+                    streaming = true;
+                } else {
+                    // Do nothing
+                }
+            } else {
+                if(confirm("Do you wish to end the stream?") == true){
+                    // Ends stream on server side
+                    socket.emit("stop stream");
+
+                    treaming = false;
+                } else {
+                    // Do nothing
+                }
+            }
         }
     </script>
     

@@ -51,12 +51,23 @@ io.on("connection", function(socket){
         // Sets PWM output using pi-blaster.js
         piblaster.setPwm(17, steering); // Forwards and backwards
         piblaster.setPwm(18, throttle); // Left and right
-        
+        console.log("Steering: " + steering + ". Throttle" + throttle);
+
         // Resets the auto stop interval
         clearInterval(autoStopInterval);
         autoStopInterval = setInterval(autoStop, 750);
     });
     
+    // Starts Raspberry Pi video stream
+    socket.on("start_stream", function(){
+        exec("ffmpeg -s 240x180 -f video4linux2 -i /dev/video0 -f mpeg1video -b 75k -r 20 http://localhost:8082/");
+    });
+
+    // Ends Raspberry Pi video stream
+    socket.on("stop stream", function(){
+        exec("sudo kill ffmpeg");
+    });
+
     // Shuts down Raspberry Pi upon request from socket
     socket.on("shut down", function(){
         exec("sudo shutdown -h now");
